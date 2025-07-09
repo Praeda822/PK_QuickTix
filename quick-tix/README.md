@@ -39,7 +39,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 This project uses a **modern ESLint setup optimised for Next.js (React 18+ and TypeScript)**, incorporating accessibility, hook safety, formatting, and common best practices — all while avoiding unnecessary or deprecated configurations.
 
-### ✅ ESLint Configuration Summary
+### ESLint Configuration Summary
 
 The ESLint config is defined in `eslint.config.js` using the [Flat Config format](https://eslint.org/docs/latest/use/configure/configuration-files-new), and extends Next.js’ recommended defaults:
 
@@ -62,7 +62,7 @@ Custom rules and plugins have been layered on top for enhanced quality, safety, 
 
 ---
 
-### 📜 Key ESLint Rules (Beyond Defaults)
+### Key ESLint Rules (Beyond Defaults)
 
 | Rule                          | Why It Matters                                                                     |
 | ----------------------------- | ---------------------------------------------------------------------------------- |
@@ -78,7 +78,7 @@ Custom rules and plugins have been layered on top for enhanced quality, safety, 
 
 ---
 
-### 📂 Ignore Configuration
+### Ignore Configuration
 
 ESLint is configured to ignore:
 
@@ -91,7 +91,7 @@ This prevents linting auto-generated and build-related folders.
 
 ---
 
-### 📦 Dev Dependencies Installation
+### Dev Dependencies Installation
 
 To enable this setup, the following packages must be installed:
 
@@ -106,7 +106,7 @@ npm install --save-dev \
 
 ---
 
-### 💡 Why This Matters
+### Why This Matters
 
 This setup ensures:
 
