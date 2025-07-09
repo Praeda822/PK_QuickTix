@@ -2,6 +2,8 @@
 'use server';
 
 import * as Sentry from '@sentry/nextjs';
+import { prisma } from '@/db/prisma';
+import { revalidatePath } from 'next/cache';
 
 // createTicket function is called on form submission
 export async function createTicket(
@@ -14,8 +16,6 @@ export async function createTicket(
   // the message property is a string that will be displayed to the user
 ): Promise<{ success: boolean; message: string }> {
   try {
-    throw new Error('This is a test error for Prisma'); // Test error to verify Sentry integration
-
     const subject = formData.get('subject') as string;
     const description = formData.get('description') as string;
     const priority = formData.get('priority') as string;
@@ -29,7 +29,22 @@ export async function createTicket(
         message: 'All fields are required.',
       };
     }
-    // Here I would typically send the data to my backend API
+
+    // Create new ticket
+    const ticket = await prisma.ticket.create({
+      data: { subject, description, priority },
+    });
+
+    Sentry.addBreadcrumb({
+      category: 'ticket',
+      message: `Ticket created with id: ${ticket.id}`,
+      level: 'info',
+    });
+
+    Sentry.captureMessage(`Ticket was created successfully: ${ticket.id}`);
+
+    revalidatePath('/tickets/new'); // Revalidate the path to update the UI
+
     return { success: true, message: 'Ticket created successfully' };
   } catch (error) {
     Sentry.captureException(error as Error, {
