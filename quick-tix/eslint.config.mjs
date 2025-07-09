@@ -16,6 +16,7 @@ const compat = new FlatCompat({
 const eslintConfig = [
   { ignores: ["dist", ".next"] },
 
+  // Next.js + TypeScript core rules
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 
   {
@@ -39,21 +40,24 @@ const eslintConfig = [
       react: { version: "18.3" },
     },
     rules: {
+      // React Hooks rules
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
+
+      // Accessibility
       ...jsxA11y.configs.recommended.rules,
-      "prettier/prettier": [
-        "error",
-        { endOfLine: "auto", trailingComma: "es5" },
-      ],
+
+      // Prettier formatting
+      "prettier/prettier": ["error", { endOfLine: "auto", trailingComma: "es5" }],
+
+      // React stylistic rules
       "react/no-array-index-key": "warn",
       "react/no-danger": "warn",
       "react/no-unknown-property": "warn",
       "react/self-closing-comp": "warn",
-      "no-unused-vars": [
-        "warn",
-        { vars: "all", args: "after-used", ignoreRestSiblings: true },
-      ],
+
+      // Good JS hygiene
+      "no-unused-vars": ["warn", { vars: "all", args: "after-used", ignoreRestSiblings: true }],
     },
   },
 ];
