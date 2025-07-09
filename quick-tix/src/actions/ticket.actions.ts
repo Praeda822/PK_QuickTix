@@ -1,6 +1,8 @@
 // This will only run on the "server"
 'use server';
 
+import * as Sentry from '@sentry/nextjs';
+
 // createTicket function is called on form submission
 export async function createTicket(
   // previous return state from last submit
@@ -14,6 +16,17 @@ export async function createTicket(
   const subject = formData.get('subject') as string;
   const description = formData.get('description') as string;
   const priority = formData.get('priority') as string;
+
+  // Error validation and error catching for the formData using Sentry
+  // If any of the fields are missing, return an error message and, as a second argument, log a warning to Sentry
+  if (!subject || !description || !priority) {
+    Sentry.captureMessage('Validation Failed: Missing ticket fields', 'warning');
+    return {
+      success: false,
+      message: 'All fields are required.',
+    };
+  }
+
   // Here I would typically send the data to my backend API
   // I'll just log it to console for now..
   console.log(subject, description, priority);
