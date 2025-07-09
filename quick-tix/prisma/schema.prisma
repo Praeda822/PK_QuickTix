@@ -15,7 +15,11 @@ datasource db {
 }
 
 // Whenever I edit this file, or add a new table, etc., I need to run a new migration and gen. the prisma client:
-// `npx prisma migrate dev --name <migration_name>` 
+// `npx prisma migrate dev --name <migration_name>`
+// Then I want to run the Prisma Client generation command:
+// `npx prisma generate`
+// Then I can have a geez at the Prisma client by running the prisma studio command:
+// `npx prisma studio`
 model Ticket {
     id          Int       @id @default(autoincrement())
     subject     String
