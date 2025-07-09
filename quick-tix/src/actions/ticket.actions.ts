@@ -1,7 +1,6 @@
 // This will only run on the "server"
 'use server';
 
-import * as Sentry from '@sentry/nextjs';
 import { prisma } from '@/db/prisma';
 import { revalidatePath } from 'next/cache';
 import { logEvent } from '../utils/sentry';
@@ -67,5 +66,40 @@ export async function createTicket(
       success: false,
       message: 'An error has occured while creating your ticket.',
     };
+  }
+}
+
+// Fetch all tickets from the database, ordered by creation date
+export async function getTickets() {
+  try {
+    const tickets = await prisma.ticket.findMany({ orderBy: { createdAt: 'desc' } });
+    logEvent('Fetched ticket list', 'ticket', { count: tickets.length }, 'info');
+    return tickets;
+  } catch (error) {
+    logEvent('An error occurred while fetching tickets', 'ticket', {}, 'error', error);
+    return [];
+  }
+}
+
+export async function getTicketById(id: string) {
+  try {
+    const ticket = await prisma.ticket.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!ticket) {
+      logEvent('Ticket not found', 'ticket', { ticketId: id }, 'warning');
+    }
+
+    return ticket;
+  } catch (error) {
+    logEvent(
+      'An error occurred while fetching ticket details',
+      'ticket',
+      { ticketId: id },
+      'error',
+      error
+    );
+    return null;
   }
 }
