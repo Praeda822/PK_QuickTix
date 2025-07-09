@@ -4,6 +4,7 @@
 import * as Sentry from '@sentry/nextjs';
 import { prisma } from '@/db/prisma';
 import { revalidatePath } from 'next/cache';
+import { logEvent } from '../utils/sentry';
 
 // createTicket function is called on form submission
 export async function createTicket(
@@ -21,9 +22,15 @@ export async function createTicket(
     const priority = formData.get('priority') as string;
 
     // Error validation and error catching for the formData using Sentry
-    // If any of the fields are missing, return an error message and, as a second argument, log a warning to Sentry
+    // If any of the fields are missing, log an error message using the logEvent helper function that takes in:
+    // message, category, data, level
     if (!subject || !description || !priority) {
-      Sentry.captureMessage('Validation Failed: Missing ticket fields', 'warning');
+      logEvent(
+        'Validation error: Missing ticket fields',
+        'ticket',
+        { subject, description, priority },
+        'warning'
+      );
       return {
         success: false,
         message: 'All fields are required.',
@@ -35,21 +42,27 @@ export async function createTicket(
       data: { subject, description, priority },
     });
 
-    Sentry.addBreadcrumb({
-      category: 'ticket',
-      message: `Ticket created with id: ${ticket.id}`,
-      level: 'info',
-    });
+    // Log the successful creation of the ticket using my helper function that takes in:
+    // message, category, data, level
+    logEvent(
+      `Ticket created successfully: ${ticket.id}`,
+      'ticket',
+      { ticketId: ticket.id },
+      'info'
+    );
 
-    Sentry.captureMessage(`Ticket was created successfully: ${ticket.id}`);
-
-    revalidatePath('/tickets/new'); // Revalidate the path to update the UI
+    // Revalidate the path to update the UI
+    revalidatePath('/tickets');
 
     return { success: true, message: 'Ticket created successfully' };
   } catch (error) {
-    Sentry.captureException(error as Error, {
-      extra: { formData: Object.fromEntries(formData.entries()) },
-    });
+    logEvent(
+      'An error occurred while creating the ticket',
+      'ticket',
+      { formData: Object.fromEntries(formData.entries()) },
+      'error',
+      error
+    );
     return {
       success: false,
       message: 'An error has occured while creating your ticket.',
