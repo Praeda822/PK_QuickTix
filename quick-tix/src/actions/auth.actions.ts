@@ -16,13 +16,19 @@ export async function registerUser(
   formData: FormData
 ): Promise<ResponseResult> {
   try {
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
+    const name = (formData.get('name') as string)?.trim();
+    const email = (formData.get('email') as string)?.trim().toLowerCase();
+    const password = (formData.get('password') as string)?.trim();
 
     if (!name || !email || !password) {
       logEvent('Validation error: missing registration fields', 'auth', { name, email }, 'warning');
       return { success: false, message: 'All fields are required.' };
+    }
+
+    // Minimum password length check
+    if (password.length < 7) {
+      logEvent('Validation error: Password is less than 7 characters', 'auth', {}, 'warning');
+      return { success: false, message: 'Password must be at least 7 characters.' };
     }
 
     // Check if user exists
@@ -39,6 +45,9 @@ export async function registerUser(
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
+    // TO-DO: Potential for race condition here, will refactor later..
+    //
+    //
     const user = await prisma.user.create({
       data: {
         name,
