@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getCurrentUser } from '../lib/current-user';
+import LogoutButton from './LogoutButton';
 
 const Navbar = async () => {
   const user = await getCurrentUser();
@@ -20,11 +21,7 @@ const Navbar = async () => {
             <Link href="/tickets" className="text-gray-700 hover:underline transition">
               My Tickets
             </Link>
-            <form>
-              <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
-                Logout
-              </button>
-            </form>
+            <LogoutButton />
           </>
         ) : (
           <>
