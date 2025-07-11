@@ -38,3 +38,36 @@ export async function verifyAuthToken<T>(token: string): Promise<T> {
     throw new Error('Token decryption failed');
   }
 }
+
+// Set auth cookie
+export async function setAuthCookie(token: string) {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.set(cookieName, token, {
+      httpOnly: true, // Prevents Javascript from accessing the cookie
+      sameSite: 'lax', // Can only be set from top-level GET requests from other sites
+      secure: process.env.NODE_ENV === 'production', // Can only be used with HTTPS in PRODUCTION
+      path: '/', // Cookie is available site-wide
+      maxAge: 60 * 60 * 24 * 7, // Max expiry date - 7 days
+    });
+  } catch (error) {
+    logEvent('Failed to set cookie', 'auth', { token }, 'error', error);
+  }
+}
+
+// Get auth token from cookie
+export async function getAuthCookie() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(cookieName);
+  return token?.value;
+}
+
+// Remove auth token cookie
+export async function removeAuthCookie() {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete(cookieName);
+  } catch (error) {
+    logEvent('Failed to remove auth cookie', 'auth', {}, 'error', error);
+  }
+}
