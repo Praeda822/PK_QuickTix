@@ -1,3 +1,5 @@
+'use client';
+
 import { useActionState, useEffect } from 'react';
 import { closeTicket } from '@/actions/ticket.actions';
 import { toast } from 'sonner';

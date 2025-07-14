@@ -3,6 +3,7 @@ import { logEvent } from '@/utils/sentry';
 import { getPriorityClass } from '@/utils/ui';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import CloseTicketButton from '@/components/CloseTicketButton';
 
 // I don't need to await a plain object, since NextJS is already _expecting_ an object to be returned from this component
 // const TicketDetailsPage = async (props: { params: Promise<{ id: string }> }) => {
@@ -42,6 +43,10 @@ const TicketDetailsPage = async (props: { params: { id: string } }) => {
         >
           ← Back to Tickets
         </Link>
+
+        {ticket.status !== 'Closed' && (
+          <CloseTicketButton ticketId={ticket.id} isClosed={ticket.status === 'Closed'} />
+        )}
       </div>
     </div>
   );
