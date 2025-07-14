@@ -92,7 +92,16 @@ export async function createTicket(
 // Fetch all tickets from the database, ordered by creation date
 export async function getTickets() {
   try {
-    const tickets = await prisma.ticket.findMany({ orderBy: { createdAt: 'desc' } });
+    const user = await getCurrentUser();
+    if (!user) {
+      logEvent('Unauthorized access to ticket list', 'ticket', {}, 'warning');
+      return [];
+    }
+
+    const tickets = await prisma.ticket.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+    });
     logEvent('Fetched ticket list', 'ticket', { count: tickets.length }, 'info');
     return tickets;
   } catch (error) {
