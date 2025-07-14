@@ -6,5 +6,7 @@ export const getPriorityClass = (priority: string) => {
       return 'text-yellow-600 font-bold';
     case 'Low':
       return 'text-green-600 font-bold';
+    default:
+      return '';
   }
 };
