@@ -8,7 +8,7 @@ import CloseTicketButton from '@/components/CloseTicketButton';
 // I don't need to await a plain object, since NextJS is already _expecting_ an object to be returned from this component
 // const TicketDetailsPage = async (props: { params: Promise<{ id: string }> }) => {
 const TicketDetailsPage = async (props: { params: { id: string } }) => {
-  const { id } = await props.params;
+  const { id } = props.params;
   const ticket = await getTicketById(id);
 
   if (!ticket) {
